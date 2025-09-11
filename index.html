@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sticker Generator</title>
+<!-- ...existing code... -->
+<link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIH7HNawEZnfPzjmMNU9oh2TcSFV3Qkomn2A&s">
+<!-- ...existing code... -->
+<style>
+  body { font-family: sans-serif; text-align: center; background:#fafafa; }
+  section { margin:40px 0; padding:20px; border-top:2px solid #ccc; }
+  h2 { margin-bottom:15px; }
+  .item { display:inline-block; margin:10px; vertical-align:top; }
+  canvas { border:1px solid #ddd; border-radius:10px; }
+  button { margin:5px; padding:6px 12px; border:none; background:#0077ff; color:white; border-radius:6px; cursor:pointer; }
+  button:hover { background:#0055aa; }
+</style>
+</head>
+<body>
+
+<h1 style="font-family: Broadway; font-size: 50px;">Sticker Generator</h1>
+ <p style="font-size: 20px; color: #555;">This website is created by Praj Web™. Praj Web™ is not a legally registered brand.<br>This website is created by Prajwal Uppalapati for the purpose of summer-of-making competition conducted by Hack Club.<br>If you liked my creation please email me at Prajwal.uppalapati@gmail.com. My youtube channel <a href="https://www.youtube.com/@CodePraj">Code Praj.</a>  </p>
+
+<section>
+  <h2 style="font-size: 40px;">🖨 Stickers</h2>
+  <input style="width: 300px; height: 40px; text-align: center; font-size: 20px; border: solid 2px #0077ff; border-radius: 50px;"  type="text" id="nameInput" placeholder="Type your name" oninput="updateStickers()">
+  <div id="stickerContainer"></div>
+</section>
+
+<script>
+const styles = Array.from({length:10}, (_,i)=>"Style "+(i+1));
+const stickerFonts = [
+  "35px Monospace","25px Broadway","23px Century Gothic","30px Forte","25px Castellar",
+  "30px Impact","20px Courier New","40px Chiller","25px Felix Titling","25px Cooper Black"
+];
+const stickerColors = [
+  "#FF0000","#00AAFF","#00CC00","#FF8800","black","#0088FF","Purple","#FF1493","#00FFFF","#FFFF00",
+];
+
+// Enhanced drawSticker function
+function drawSticker(ctx, style, text, font, color, w=200,h=200){
+  ctx.clearRect(0,0,w,h);
+  // Background
+  switch(style){
+    case "Style 1": 
+      ctx.fillStyle="linear-gradient(45deg,#ff0,#ff8800)";
+      ctx.fillRect(0,0,w,h);
+      ctx.beginPath(); ctx.arc(w/2,h/2,60,0,2*Math.PI); ctx.fillStyle="rgba(255,255,255,0.3)"; ctx.fill(); 
+      break;
+    case "Style 2": 
+      ctx.fillStyle="#0ff"; ctx.fillRect(0,0,w,h);
+      for(let i=0;i<20;i++){ ctx.fillStyle=`rgba(255,255,255,${Math.random()*0.5})`; ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h,5,0,2*Math.PI); ctx.fill(); } 
+      break;
+    case "Style 3": 
+      let grad=ctx.createLinearGradient(0,0,w,h); grad.addColorStop(0,"#deb887"); grad.addColorStop(1,"#ffcc99"); ctx.fillStyle=grad; ctx.fillRect(0,0,w,h); 
+      break;
+    case "Style 4": 
+      ctx.fillStyle="#f0f0f0"; ctx.fillRect(0,0,w,h);
+      ctx.strokeStyle="#888"; ctx.lineWidth=4; ctx.strokeRect(10,10,w-20,h-20);
+      break;
+    case "Style 5": 
+      ctx.fillStyle="#ff4081"; ctx.fillRect(0,0,w,h);
+      ctx.shadowColor="black"; ctx.shadowBlur=15; ctx.shadowOffsetX=5; ctx.shadowOffsetY=5;
+      break;
+    case "Style 6": 
+      ctx.fillStyle="#fff"; ctx.fillRect(0,0,w,h);
+      ctx.strokeStyle="blue"; ctx.lineWidth=5; ctx.strokeRect(10,10,w-20,h-20); 
+      break;
+    case "Style 7": 
+      let g2=ctx.createRadialGradient(w/2,h/2,20,w/2,h/2,100); g2.addColorStop(0,"pink"); g2.addColorStop(1,"cyan"); ctx.fillStyle=g2; ctx.fillRect(0,0,w,h); 
+      break;
+    case "Style 8": ctx.fillStyle="#ffe4e1"; ctx.fillRect(0,0,w,h); ctx.fillStyle="rgba(0,0,0,0.1)"; for(let i=0;i<10;i++){ctx.fillRect(i*20, i*20, 15,15);} break;
+    case "Style 9": ctx.fillStyle="#000"; ctx.fillRect(0,0,w,h); ctx.fillStyle="rgba(255,255,255,0.3)"; for(let i=0;i<15;i++){ctx.beginPath(); ctx.arc(Math.random()*w,Math.random()*h,5,0,2*Math.PI); ctx.fill();} break;
+    case "Style 10": ctx.fillStyle="#111"; ctx.fillRect(0,0,w,h); ctx.strokeStyle="white"; ctx.lineWidth=3; ctx.strokeRect(20,20,w-40,h-40); break;
+    default: ctx.fillStyle="#ccc"; ctx.fillRect(0,0,w,h); 
+  }
+  // Text
+  ctx.font=font;
+  ctx.fillStyle=color;
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  ctx.fillText(text,w/2,h/2);
+}
+
+// Update stickers
+function updateStickers(){
+  const text=document.getElementById("nameInput").value || "Praj Web™";
+  const container=document.getElementById("stickerContainer");
+  container.innerHTML="";
+  styles.forEach((style,i)=>{
+    const div=document.createElement("div"); div.className="item";
+    const canvas=document.createElement("canvas"); canvas.width=200; canvas.height=200;
+    drawSticker(canvas.getContext("2d"), style, text, stickerFonts[i], stickerColors[i]);
+    const btn=document.createElement("button");
+    btn.textContent="Download PNG";
+    btn.onclick=()=>{ const link=document.createElement("a"); link.href=canvas.toDataURL(); link.download=style+".png"; link.click(); };
+    div.appendChild(canvas); div.appendChild(btn);
+    container.appendChild(div);
+  });
+}
+
+// Initialize
+updateStickers();
+</script>
+</body>
+</html>
